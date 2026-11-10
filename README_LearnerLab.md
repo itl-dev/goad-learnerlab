@@ -19,7 +19,7 @@ Active Directory の攻撃演習環境 GOAD-Light（Windows 3 台＋踏み台 Li
 
 | 状態 | 費用 |
 |---|---|
-| 構築（初回 2〜3 時間） | 約 $1 |
+| 構築（初回 1〜1.5 時間） | 約 $1 |
 | 演習中（全台起動） | 約 $0.25 / 時間 |
 | 停止中（ディスク約 120GB＋固定 IP） | 約 $0.5 / 日（約 $3.6 / 週） |
 | ラボ削除後 | $0 |
@@ -51,7 +51,7 @@ sudo apt update && sudo apt install -y terraform
 GOAD（Learner Lab 版）を取得して、初回セットアップを行います。
 
 ```bash
-git clone -b learnerlab <配布されたリポジトリURL> GOAD
+git clone -b learnerlab https://github.com/itl-dev/goad-learnerlab.git GOAD
 cd GOAD
 ./goad.sh -t check -l GOAD-Light -p aws   # 初回は Python 環境の作成に数分かかります
 ```
@@ -79,7 +79,7 @@ cd GOAD
 自分のグローバル IP が自動で表示されるので、そのまま Enter を押します。
 学内と自宅など **接続元が変わったら**、ラボ作成前は `setup` をやり直し、作成後は `./goad-ll.sh allow-ip` を実行します（`ssh` がタイムアウトする場合はまずこれを確認）。
 
-## 4. ラボの構築（初回のみ・2〜3 時間）
+## 4. ラボの構築（初回のみ・1〜1.5 時間）
 
 ```bash
 ./goad-ll.sh install

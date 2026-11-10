@@ -2,6 +2,7 @@ import cmd
 import argparse
 import sys
 import time
+import datetime
 from goad.config import Config
 from goad.log import Log
 from goad.exceptions import JumpBoxInitFailed
@@ -136,7 +137,7 @@ class Goad(cmd.Cmd):
             start = time.time()
             # run playbook
             self.lab_manager.get_current_instance_provisioner().run(arg)
-            time_provision = time.ctime(time.time() - start)[11:19]
+            time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
             Log.info(f'Provisioned with {arg} in {time_provision}')
 
     def do_provision_lab(self, arg=''):
@@ -144,7 +145,7 @@ class Goad(cmd.Cmd):
         provision_result = self.lab_manager.get_current_instance_provisioner().run()
         if provision_result:
             self.lab_manager.get_current_instance().set_status(READY)
-            time_provision = time.ctime(time.time() - start)[11:19]
+            time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
             Log.info(f'Lab successfully provisioned in {time_provision}')
         return provision_result
 
@@ -153,7 +154,7 @@ class Goad(cmd.Cmd):
         provision_result = self.lab_manager.get_current_instance_provisioner().run_from(arg)
         if provision_result:
             self.lab_manager.get_current_instance().set_status(READY)
-            time_provision = time.ctime(time.time() - start)[11:19]
+            time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
             Log.info(f'Provisioned from {arg} in {time_provision}')
 
     def do_sync_source_jumpbox(self, arg=''):
@@ -322,7 +323,7 @@ class Goad(cmd.Cmd):
                 extension = self.lab_manager.get_current_instance_lab().get_extension(extension_name)
                 provision_result = self.lab_manager.get_current_instance_provisioner().run_extension(extension, current_instance_extensions_name)
                 if provision_result:
-                    time_provision = time.ctime(time.time() - start)[11:19]
+                    time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
                     Log.info(f'Provision extension done in {time_provision}')
             else:
                 Log.error(f'extension {extension_name} not enabled in instance abort')
@@ -434,7 +435,7 @@ class Goad(cmd.Cmd):
         start = time.time()
         provision_result = self.lab_manager.get_current_instance_provisioner().run_disable_vagrant(disable_vagrant=True)
         if provision_result:
-            time_provision = time.ctime(time.time() - start)[11:19]
+            time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
             Log.info(f'Disable vagrant done in {time_provision}')
             Log.info(f'Please restart the lab to avoid administrator NT hash in lsass')
 
@@ -442,7 +443,7 @@ class Goad(cmd.Cmd):
         start = time.time()
         provision_result = self.lab_manager.get_current_instance_provisioner().run_disable_vagrant(disable_vagrant=False)
         if provision_result:
-            time_provision = time.ctime(time.time() - start)[11:19]
+            time_provision = str(datetime.timedelta(seconds=int(time.time() - start)))
             Log.info(f'Enable vagrant done in {time_provision}')
 
     # alias to list

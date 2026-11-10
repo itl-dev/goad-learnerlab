@@ -160,7 +160,7 @@ cmd_install() {
   local lab=${1:-GOAD-Light}
   grep -q '^whitelist_cidr' "$INI" 2>/dev/null || die "先に ./goad-ll.sh setup を実行してください"
   ensure_ssh_port
-  info "$lab を AWS に構築します（1.5〜3 時間程度。途中でセッションが切れそうなら Start Lab を押して延長）"
+  info "$lab を AWS に構築します（1〜1.5 時間程度。途中でセッションが切れそうなら Start Lab を押して延長）"
   local log; log="$HOME/.goad/goad-ll-install.log"
   yes y | ./goad.sh -t install -l "$lab" -p aws -m remote 2>&1 | tee "$log" || true
   finish_or_hint "$log"
