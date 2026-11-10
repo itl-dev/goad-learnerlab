@@ -13,7 +13,7 @@ resource "aws_network_interface" "goad-vm-nic-jumpbox" {
 }
 
 resource "aws_instance" "goad-vm-jumpbox" {
-  ami                    = "ami-04c332520bd9cedb4"
+  ami                    = data.aws_ami.ubuntu_jammy.id
   instance_type          = "t2.medium"
 
   network_interface {
@@ -26,6 +26,10 @@ resource "aws_instance" "goad-vm-jumpbox" {
                            })
 
   key_name = "{{lab_identifier}}-jumpbox-keypair"
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
   tags = {
     Name = "{{lab_name}}-jumpbox"
     Lab = "{{lab_identifier}}"

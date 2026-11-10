@@ -35,7 +35,15 @@ variable "goad_private_cidr" {
 variable "whitelist_cidr" {
   description = "Whitelisted table IP that can access the Ubuntu jumpbox"
   type    = set(string)
-  default = ["0.0.0.0/0"]
+  # [Learner Lab] ~/.goad/goad.ini の [aws] whitelist_cidr で指定（例: 203.0.113.10/32）
+  default = ["{{config.get_value('aws', 'whitelist_cidr', '0.0.0.0/0')}}"]
+}
+
+# [Learner Lab] NAT Gateway は停止中も課金されるため、構築後は false にして削除する
+variable "enable_nat" {
+  description = "Create the NAT gateway (needed only while provisioning Windows VMs)"
+  type    = bool
+  default = true
 }
 
 # Credentials

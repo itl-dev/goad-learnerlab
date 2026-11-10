@@ -33,7 +33,7 @@ resource "aws_network_interface" "goad-vm-nic" {
 resource "aws_instance" "goad-vm" {
   for_each = var.vm_config
 
-  ami                    = each.value.ami
+  ami                    = lookup(local.windows_ami_by_sku, each.value.windows_sku, each.value.ami)
   instance_type          = each.value.instance_type
 
   network_interface {
@@ -48,6 +48,10 @@ resource "aws_instance" "goad-vm" {
                            })
 
   key_name = "{{lab_identifier}}-windows-keypair"
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 
   tags = {
     Name = "{{lab_name}}-${each.value.name}"

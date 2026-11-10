@@ -58,9 +58,12 @@ resource "aws_route_table" "goad_public_table" {
 resource "aws_route_table" "goad_private_table" {
   vpc_id = aws_vpc.goad_vpc.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  dynamic "route" {
+    for_each = var.enable_nat ? [1] : []
+    content {
+      cidr_block     = "0.0.0.0/0"
+      nat_gateway_id = aws_nat_gateway.nat_gateway[0].id
+    }
   }
 
   tags = {
@@ -165,6 +168,7 @@ resource "aws_eip" "public_ip" {
 }
 
 resource "aws_eip" "nat_ip" {
+  count  = var.enable_nat ? 1 : 0
   domain = "vpc"
 }
 
@@ -180,7 +184,8 @@ resource "aws_internet_gateway" "internet_gateway" {
 
 
 resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_ip.id
+  count         = var.enable_nat ? 1 : 0
+  allocation_id = aws_eip.nat_ip[0].id
   subnet_id     = aws_subnet.goad_public_network.id
 
   tags = {
