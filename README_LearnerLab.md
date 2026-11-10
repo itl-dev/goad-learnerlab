@@ -6,6 +6,7 @@ Active Directory の攻撃演習環境 GOAD-Light（Windows 3 台＋踏み台 Li
 - AMI をリージョンに依存せず自動検索（元は eu-west-3 固定）
 - 踏み台への SSH を自分の IP だけに制限（元は全世界に公開）
 - 構築後に **NAT Gateway を自動削除**（停止中も 1 日約 $1 かかるため）
+- 踏み台の SSH を **443 番でも待ち受け**（学内ネットワークは外向き 22 番が遮断されているため。`goad-ll.sh` が自動判定して `~/.ssh/config` を設定）
 - 補助スクリプト `goad-ll.sh`
 
 > [!CAUTION]
@@ -87,18 +88,18 @@ cd GOAD
 - 途中でセッションの残り時間が少なくなったら、Learner Lab の **Start Lab をもう一度押す** と延長されます。
 - 完了すると NAT Gateway が自動削除され、状態が表示されます。
 
-**途中で失敗したとき**：まず `./goad-ll.sh creds` で認証情報を再登録し、続きから再実行します。
+**途中で失敗したとき**：認証情報を再登録して、続きから再実行します（何度実行しても大丈夫です）。
 
 ```bash
-./goad.sh
-# GOAD のコンソールで:
-load <インスタンスID>        # status で表示される ID
-provision_lab               # Windows 側の設定を続きから再実行
-exit
-./goad-ll.sh nat-off
+./goad-ll.sh creds
+./goad-ll.sh resume
 ```
 
-> provision_lab の前に NAT が必要な場合（Windows がインターネットに出られない旨のエラー）は `./goad-ll.sh nat-on` を先に実行してください。
+構築が終わったら、踏み台に演習用ツール（NetExec, impacket, bloodhound.py, certipy）を入れます（10 分程度）。
+
+```bash
+./goad-ll.sh tools
+```
 
 ## 5. 演習（毎回）
 
@@ -106,6 +107,12 @@ exit
 ./goad-ll.sh creds     # Start Lab 後に毎回
 ./goad-ll.sh start     # 停止していれば起動（数分待つ）
 ./goad-ll.sh ssh       # 踏み台にログイン → ここから攻撃ツールを実行
+```
+
+踏み台での動作確認の例：
+
+```bash
+nxc smb 192.168.56.10 192.168.56.11 192.168.56.22
 ```
 
 ラボのネットワーク：
@@ -148,6 +155,8 @@ exit
 | `./goad-ll.sh setup` | 初期設定（リージョン・SSH 許可 IP） |
 | `./goad-ll.sh creds` | Learner Lab の認証情報を登録 |
 | `./goad-ll.sh install [LAB]` | 構築（既定 GOAD-Light）＋NAT 削除 |
+| `./goad-ll.sh resume` | 構築が途中で失敗したときの再開 |
+| `./goad-ll.sh tools` | 踏み台に演習用ツールを導入 |
 | `./goad-ll.sh status` | 状態と概算費用 |
 | `./goad-ll.sh start` / `stop` | 全台の起動 / 停止 |
 | `./goad-ll.sh ssh` | 踏み台へ SSH |
